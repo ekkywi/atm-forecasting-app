@@ -12,6 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;;
 
 class AtmResource extends Resource
 {
@@ -23,26 +27,53 @@ class AtmResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('atm_id')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('location_name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('address')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('latitude')
-                    ->numeric(),
-                Forms\Components\TextInput::make('longitude')
-                    ->numeric(),
-                Forms\Components\TextInput::make('status')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('active'),
-                Forms\Components\TextInput::make('max_capacity_100k')
-                    ->numeric(),
-                Forms\Components\TextInput::make('max_capacity_50k')
-                    ->numeric(),
+                Section::make('Informasi Mesin')
+                    ->description('Detail identitas dan status mesin ATM.')
+                    ->schema([
+                        TextInput::make('atm_id')
+                            ->label('ID ATM')
+                            ->required()
+                            ->unique(ignoreRecord: true) // Harus unik, kecuali untuk record yg sedang diedit
+                            ->maxLength(255),
+                        Select::make('status')
+                            ->options([
+                                'active' => 'Aktif',
+                                'inactive' => 'Tidak Aktif',
+                                'maintenance' => 'Dalam Perbaikan',
+                            ])
+                            ->native(false) // Agar tampilan dropdown lebih modern
+                            ->required(),
+                    ])->columns(2), // Membagi section ini menjadi 2 kolom
+
+                Section::make('Informasi Lokasi')
+                    ->schema([
+                        TextInput::make('location_name')
+                            ->label('Nama Lokasi')
+                            ->required()
+                            ->maxLength(255),
+                        Textarea::make('address')
+                            ->label('Alamat Lengkap')
+                            ->columnSpanFull(), // Membuat field ini memakan lebar penuh
+                        TextInput::make('latitude')
+                            ->numeric(),
+                        TextInput::make('longitude')
+                            ->numeric(),
+                    ])->columns(2),
+
+                Section::make('Informasi Kapasitas Cassette')
+                    ->description('Kapasitas maksimal dalam jumlah lembar.')
+                    ->schema([
+                        TextInput::make('max_capacity_100k')
+                            ->label('Kapasitas 100 Ribu')
+                            ->numeric()
+                            ->default(0)
+                            ->required(),
+                        TextInput::make('max_capacity_50k')
+                            ->label('Kapasitas 50 Ribu')
+                            ->numeric()
+                            ->default(0)
+                            ->required(),
+                    ])->columns(2),
             ]);
     }
 
