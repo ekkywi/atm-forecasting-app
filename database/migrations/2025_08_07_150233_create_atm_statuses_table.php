@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('atm_statuses', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUuid('atm_id')->constrained()->cascadeOnDelete();
+            $table->unsignedInteger('sheets_out'); // Data 'lembar keluar' dari CSV
+            $table->string('problem_code')->nullable(); // Data 'problem' dari CSV
+            $table->timestamp('reported_at'); // Waktu data dilaporkan dari CSV
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('atm_statuses');
+    }
+};

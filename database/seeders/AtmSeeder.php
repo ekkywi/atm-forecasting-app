@@ -13,31 +13,46 @@ class AtmSeeder extends Seeder
      */
     public function run(): void
     {
-        Atm::create([
-            'atm_id' => 'ATM-001',
+        // Buat ATM Tipe Mono-Denominasi (1 Cassette)
+        $atm1 = Atm::create([
+            'terminal_id' => 'ATM-001',
             'location_name' => 'Supermarket ADA',
             'address' => 'Jl. Pahlawan No. 1',
+            'type' => 'ATM',
             'status' => 'active',
-            'max_capacity_100k' => 2000,
-            'max_capacity_50k' => 0,
+        ]);
+        // Buat Cassette untuk ATM-001
+        $atm1->cassettes()->create([
+            'denomination' => 100000,
+            'max_sheets' => 8000,
         ]);
 
-        Atm::create([
-            'atm_id' => 'CRM-001',
+        // Buat ATM Tipe CRM (2 Cassette)
+        $crm1 = Atm::create([
+            'terminal_id' => 'CRM-001',
             'location_name' => 'Mall Paragon',
             'address' => 'Jl. Pemuda No. 10',
+            'type' => 'CRM',
             'status' => 'active',
-            'max_capacity_100k' => 2500,
-            'max_capacity_50k' => 2500,
+        ]);
+        // Buat Cassette untuk CRM-001
+        $crm1->cassettes()->createMany([
+            ['denomination' => 100000, 'max_sheets' => 4000],
+            ['denomination' => 50000, 'max_sheets' => 4000],
         ]);
 
-        Atm::create([
-            'atm_id' => 'ATM-002',
+        // Buat ATM yang sedang maintenance
+        $atm2 = Atm::create([
+            'terminal_id' => 'ATM-002',
             'location_name' => 'SPBU Kalibanteng',
             'address' => 'Jl. Siliwangi No. 50',
-            'status' => 'inactive',
-            'max_capacity_100k' => 0,
-            'max_capacity_50k' => 2000,
+            'type' => 'ATM',
+            'status' => 'maintenance',
+        ]);
+        // Buat Cassette untuk ATM-002
+        $atm2->cassettes()->create([
+            'denomination' => 50000,
+            'max_sheets' => 8000,
         ]);
     }
 }

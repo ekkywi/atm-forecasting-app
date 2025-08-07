@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('atms', function (Blueprint $table) {
-            $table->id();
-            $table->string('atm_id')->unique();
+            $table->uuid('id')->primary();
+            $table->string('terminal_id')->unique();
             $table->string('location_name');
             $table->text('address')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('status')->default('active');
-            $table->unsignedBigInteger('max_capacity_100k')->nullable();
-            $table->unsignedBigInteger('max_capacity_50k')->nullable();
+            $table->string('type')->default('ATM');
             $table->timestamps();
         });
     }

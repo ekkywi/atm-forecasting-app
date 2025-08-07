@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('atm_cassettes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('atm_id')->contrained()->cascadeOnDelete();
-            $table->timestamp('transaction_date');
-            $table->unsignedBigInteger('amount');
-            $table->string('type')->default('withdrawal');
+            $table->foreignUuid('atm_id')->constrained()->cascadeOnDelete();
+            $table->unsignedInteger('denomination');
+            $table->unsignedInteger('max_sheets');
+            $table->unsignedInteger('current_sheets')->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('atm_cassettes');
     }
 };

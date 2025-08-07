@@ -15,11 +15,17 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Repeater;
 
 class AtmResource extends Resource
 {
     protected static ?string $model = Atm::class;
+
+    protected static ?string $navigationGroup = 'Manajemen ATM';
+
+    protected static ?string $navigationLabel = 'Master Data ATM';
+    protected static ?string $pluralModelLabel = 'Master Data ATM';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -28,52 +34,55 @@ class AtmResource extends Resource
         return $form
             ->schema([
                 Section::make('Informasi Mesin')
-                    ->description('Detail identitas dan status mesin ATM.')
                     ->schema([
-                        TextInput::make('atm_id')
-                            ->label('ID ATM')
+                        TextInput::make('terminal_id')
+                            ->label('Terminal ID')
                             ->required()
-                            ->unique(ignoreRecord: true) // Harus unik, kecuali untuk record yg sedang diedit
-                            ->maxLength(255),
+                            ->unique(ignoreRecord: true),
+                        Select::make('type')
+                            ->options([
+                                'ATM' => 'ATM (Tarik Tunai)',
+                                'CRM' => 'CRM (Setor Tarik)',
+                            ])->required()->native(false),
                         Select::make('status')
                             ->options([
                                 'active' => 'Aktif',
                                 'inactive' => 'Tidak Aktif',
                                 'maintenance' => 'Dalam Perbaikan',
-                            ])
-                            ->native(false) // Agar tampilan dropdown lebih modern
-                            ->required(),
-                    ])->columns(2), // Membagi section ini menjadi 2 kolom
+                            ])->required()->native(false),
+                    ])->columns(3),
 
                 Section::make('Informasi Lokasi')
                     ->schema([
                         TextInput::make('location_name')
                             ->label('Nama Lokasi')
-                            ->required()
-                            ->maxLength(255),
+                            ->required(),
                         Textarea::make('address')
                             ->label('Alamat Lengkap')
-                            ->columnSpanFull(), // Membuat field ini memakan lebar penuh
-                        TextInput::make('latitude')
-                            ->numeric(),
-                        TextInput::make('longitude')
-                            ->numeric(),
+                            ->columnSpanFull(),
+                        TextInput::make('latitude')->numeric(),
+                        TextInput::make('longitude')->numeric(),
                     ])->columns(2),
 
-                Section::make('Informasi Kapasitas Cassette')
-                    ->description('Kapasitas maksimal dalam jumlah lembar.')
+                Section::make('Detail Cassette Uang')
                     ->schema([
-                        TextInput::make('max_capacity_100k')
-                            ->label('Kapasitas 100 Ribu')
-                            ->numeric()
-                            ->default(0)
-                            ->required(),
-                        TextInput::make('max_capacity_50k')
-                            ->label('Kapasitas 50 Ribu')
-                            ->numeric()
-                            ->default(0)
-                            ->required(),
-                    ])->columns(2),
+                        Repeater::make('cassettes') // Ini adalah field pengulang
+                            ->relationship() // Menandakan ini berhubungan dengan relasi 'cassettes'
+                            ->schema([
+                                Select::make('denomination')
+                                    ->label('Denominasi')
+                                    ->options([
+                                        '50000' => 'Rp 50.000',
+                                        '100000' => 'Rp 100.000',
+                                    ])->required()->native(false),
+                                TextInput::make('max_sheets')
+                                    ->label('Jumlah Lembar Maksimal')
+                                    ->numeric()
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->addActionLabel('Tambah Cassette'),
+                    ])->columnSpanFull(),
             ]);
     }
 
@@ -81,23 +90,24 @@ class AtmResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('atm_id')
-                    ->searchable() // Membuat kolom ini bisa dicari
-                    ->sortable(),  // Membuat kolom ini bisa diurutkan
+                Tables\Columns\TextColumn::make('terminal_id')
+                    ->label('Terminal ID')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('location_name')
+                    ->label('Nama Lokasi')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipe Mesin')
+                    ->badge(), // Menampilkan sebagai badge
                 Tables\Columns\TextColumn::make('status')
-                    ->badge() // Menampilkan status sebagai "badge" berwarna
+                    ->badge() // Menampilkan sebagai badge
                     ->color(fn(string $state): string => match ($state) {
                         'active' => 'success',
                         'inactive' => 'danger',
                         'maintenance' => 'warning',
                     }),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true), // Kolom ini bisa disembunyikan
-                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

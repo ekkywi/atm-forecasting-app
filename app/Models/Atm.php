@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Atm extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     /**
      * The table associated with the model.
@@ -16,13 +18,22 @@ class Atm extends Model
      */
 
     protected $fillable = [
-        'atm_id',
+        'terminal_id',
         'location_name',
         'address',
         'latitude',
         'longitude',
         'status',
-        'max_capacity_100k',
-        'max_capacity_50k',
+        'type',
     ];
+
+    public function cassettes(): HasMany
+    {
+        return $this->hasMany(AtmCassette::class);
+    }
+
+    public function statuses(): HasMany
+    {
+        return $this->hasMany(AtmStatus::class);
+    }
 }
