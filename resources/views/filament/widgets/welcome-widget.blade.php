@@ -7,7 +7,7 @@
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Ini adalah dashboard utama untuk aplikasi Forecasting ATM Anda.
+                    Ini adalah dashboard utama untuk aplikasi Forecasting ATM.
                 </p>
             </div>
         </div>

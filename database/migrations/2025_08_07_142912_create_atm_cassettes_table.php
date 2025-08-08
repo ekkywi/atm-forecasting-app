@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('atm_cassettes', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('atm_id')->constrained()->cascadeOnDelete();
+            $table->unsignedTinyInteger('cassette_index'); // Nomor urut kaset (1, 2, 3, 4)
             $table->unsignedInteger('denomination');
-            $table->unsignedInteger('max_sheets');
-            $table->unsignedInteger('current_sheets')->default(0);
+            $table->unsignedInteger('max_sheets')->default(2000); // Pagu per kaset
+            $table->unique(['atm_id', 'cassette_index']);
             $table->timestamps();
         });
     }

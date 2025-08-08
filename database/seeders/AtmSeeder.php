@@ -13,46 +13,44 @@ class AtmSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat ATM Tipe Mono-Denominasi (1 Cassette)
+        // ATM-001: 1 Tipe Denominasi, 4 Kaset Penuh
         $atm1 = Atm::create([
             'terminal_id' => 'ATM-001',
             'location_name' => 'Supermarket ADA',
-            'address' => 'Jl. Pahlawan No. 1',
             'type' => 'ATM',
             'status' => 'active',
         ]);
-        // Buat Cassette untuk ATM-001
         $atm1->cassettes()->create([
             'denomination' => 100000,
-            'max_sheets' => 8000,
+            'max_sheets' => 8000, // Standar 4 kaset x 2000 lembar
+            'current_sheets' => 8000,
+            'status' => 'OK',
         ]);
 
-        // Buat ATM Tipe CRM (2 Cassette)
+        // CRM-001: 2 Tipe Denominasi, Masing-masing 2 Kaset
         $crm1 = Atm::create([
             'terminal_id' => 'CRM-001',
             'location_name' => 'Mall Paragon',
-            'address' => 'Jl. Pemuda No. 10',
             'type' => 'CRM',
             'status' => 'active',
         ]);
-        // Buat Cassette untuk CRM-001
         $crm1->cassettes()->createMany([
-            ['denomination' => 100000, 'max_sheets' => 4000],
-            ['denomination' => 50000, 'max_sheets' => 4000],
+            ['denomination' => 100000, 'max_sheets' => 4000, 'current_sheets' => 4000, 'status' => 'OK'], // 2 kaset 100rb
+            ['denomination' => 50000, 'max_sheets' => 4000, 'current_sheets' => 4000, 'status' => 'OK'], // 2 kaset 50rb
         ]);
 
-        // Buat ATM yang sedang maintenance
+        // ATM-002: 1 Tipe Denominasi, 2 Kaset
         $atm2 = Atm::create([
             'terminal_id' => 'ATM-002',
             'location_name' => 'SPBU Kalibanteng',
-            'address' => 'Jl. Siliwangi No. 50',
             'type' => 'ATM',
             'status' => 'maintenance',
         ]);
-        // Buat Cassette untuk ATM-002
         $atm2->cassettes()->create([
             'denomination' => 50000,
-            'max_sheets' => 8000,
+            'max_sheets' => 4000, // Standar 2 kaset x 2000 lembar
+            'current_sheets' => 4000,
+            'status' => 'LOW',
         ]);
     }
 }

@@ -18,10 +18,6 @@ class AtmOverviewWidget extends BaseWidget
             Stat::make('ATMs Bermasalah', Atm::where('status', '!=', 'active')->count())
                 ->description('Mesin butuh perhatian')
                 ->color('danger'),
-
-            Stat::make('Total Transaksi (Hari Ini)', \App\Models\AtmStatus::whereDate('reported_at', today())->count())
-                ->description('Laporan impor yang masuk hari ini')
-                ->color('info'),
         ];
     }
 }

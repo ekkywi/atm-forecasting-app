@@ -66,21 +66,21 @@ class AtmResource extends Resource
 
                 Section::make('Detail Cassette Uang')
                     ->schema([
-                        Repeater::make('cassettes') // Ini adalah field pengulang
-                            ->relationship() // Menandakan ini berhubungan dengan relasi 'cassettes'
+                        Repeater::make('cassettes')
+                            ->relationship()
                             ->schema([
+                                TextInput::make('cassette_index')
+                                    ->label('Nomor Kaset')
+                                    ->numeric()->required()->minValue(1)->maxValue(4),
                                 Select::make('denomination')
                                     ->label('Denominasi')
-                                    ->options([
-                                        '50000' => 'Rp 50.000',
-                                        '100000' => 'Rp 100.000',
-                                    ])->required()->native(false),
+                                    ->options(['50000' => 'Rp 50.000', '100000' => 'Rp 100.000'])
+                                    ->required()->native(false),
                                 TextInput::make('max_sheets')
-                                    ->label('Jumlah Lembar Maksimal')
-                                    ->numeric()
-                                    ->required(),
+                                    ->label('Pagu Lembar')
+                                    ->numeric()->required()->default(2000),
                             ])
-                            ->columns(2)
+                            ->columns(3)
                             ->addActionLabel('Tambah Cassette'),
                     ])->columnSpanFull(),
             ]);

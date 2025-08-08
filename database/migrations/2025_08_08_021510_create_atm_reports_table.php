@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('atm_statuses', function (Blueprint $table) {
+        Schema::create('atm_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('atm_id')->constrained()->cascadeOnDelete();
-            $table->unsignedInteger('sheets_out'); // Data 'lembar keluar' dari CSV
-            $table->string('problem_code')->nullable(); // Data 'problem' dari CSV
-            $table->timestamp('reported_at'); // Waktu data dilaporkan dari CSV
+            $table->string('problem_code')->nullable();
+            $table->timestamp('reported_at');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('atm_statuses');
+        Schema::dropIfExists('atm_reports');
     }
 };

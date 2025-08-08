@@ -32,8 +32,8 @@ class Atm extends Model
         return $this->hasMany(AtmCassette::class);
     }
 
-    public function statuses(): HasMany
+    public function reports(): HasMany
     {
-        return $this->hasMany(AtmStatus::class);
+        return $this->hasMany(AtmReport::class);
     }
 }
